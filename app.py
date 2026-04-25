@@ -9,13 +9,13 @@ def responder():
         msg = request.get_data(as_text=True).lower()
 
         if "oi" in msg or "olá" in msg:
-            return "Boa noite. Posso ajudar?"
+            return "Olá! Como vai?"
 
         if "ajuda" in msg:
             return "Informe sua solicitação."
 
         if "quem é você" in msg:
-            return "Sou responsável pela segurança deste local."
+            return "Sou responsável pela segurança da JaneS Crystal."
 
         return "Estou acompanhando o ambiente."
 
