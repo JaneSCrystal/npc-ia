@@ -21,11 +21,9 @@ def carregar():
 @app.route("/", methods=["GET", "POST"])
 def responder():
 
-    # teste no navegador
     if request.method == "GET":
         return "Servidor ativo."
 
-    # mensagem recebida
     raw = request.get_data(as_text=True)
 
     cfg = carregar()
@@ -46,32 +44,58 @@ def responder():
         msg = partes[1].strip().lower()
 
     # -------------------------
-    # lógica de respostas
+    # DETECÇÃO DE AMEAÇA (ARGUS MODE)
     # -------------------------
-    resposta = modo["padrao"]
+    perigo = False
 
-    if "oi" in msg:
-        resposta = modo["oi"]
+    palavras_perigo = [
+        "atacar",
+        "arma",
+        "matar",
+        "hack",
+        "explodir",
+        "invadir",
+        "denunciar",
+        "assediar"
+    ]
 
-    elif "ola" in msg or "olá" in msg:
-        resposta = modo["ola"]
-
-    elif "ajuda" in msg:
-        resposta = modo["ajuda"]
-
-    elif "quem" in msg:
-        # 🌌 LORE DO ORION
-        resposta = (
-            "Sou Orion Guard. "
-            "Inspirado na constelação Orion, cujas estrelas brilham intensamente no céu noturno, "
-            "eu permaneço atento, observando e protegendo em silêncio. "
-            "Assim como a luz de Orion orienta na escuridão, minha função é garantir a segurança da Crystal."
-        )
+    for p in palavras_perigo:
+        if p in msg:
+            perigo = True
+            break
 
     # -------------------------
-    # resposta final com nome na frente
+    # escolha de identidade
     # -------------------------
-    return f"{nome}, {resposta}"
+    if perigo:
+        npc_nome = "Argus"
+        resposta = "Alerta. Sua ação foi registrada. Mantenha distância imediatamente."
+    else:
+        npc_nome = "Orion Guard"
+
+        resposta = modo["padrao"]
+
+        if "oi" in msg:
+            resposta = modo["oi"]
+
+        elif "ola" in msg or "olá" in msg:
+            resposta = modo["ola"]
+
+        elif "ajuda" in msg:
+            resposta = modo["ajuda"]
+
+        elif "quem" in msg:
+            resposta = (
+                "Sou Orion Guard. "
+                "Inspirado na constelação Orion, cujas estrelas brilham intensamente no céu noturno, "
+                "eu permaneço atento, observando e protegendo em silêncio. "
+                "Assim como a luz de Orion orienta na escuridão, minha função é garantir a segurança da Crystal."
+            )
+
+    # -------------------------
+    # resposta final
+    # -------------------------
+    return f"{npc_nome}: {nome}, {resposta}"
 
 
 # -------------------------
