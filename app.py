@@ -4,43 +4,56 @@ import json
 app = Flask(__name__)
 
 def carregar():
-    try:
-        with open("config.json", "r", encoding="utf-8") as f:
-            return json.load(f)
-    except Exception:
-        return None
+    with open("config.json", "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def detectar_estado(msg):
+    msg = msg.lower()
+
+    if any(x in msg for x in ["ataque", "sair", "invadir", "perigo", "ameaça", "ameaça"]):
+        return "protecao"
+
+    if any(x in msg for x in ["segurança", "seguranca", "estranho", "quem é você"]):
+        return "atencao"
+
+    return "normal"
 
 
 @app.route("/", methods=["GET", "POST"])
 def responder():
 
-    # 🔹 TESTE NO NAVEGADOR
     if request.method == "GET":
         return "Servidor ativo."
 
-    # 🔹 IA (Second Life POST)
-    msg = request.get_data(as_text=True).lower()
-
+    msg = request.get_data(as_text=True)
     cfg = carregar()
-    if not cfg:
-        return "Erro de configuração."
 
-    modo = cfg.get("modo", "seguranca")
-    frases = cfg["modos"][modo]
+    estado = detectar_estado(msg)
+    modo = cfg["modos"]["seguranca"]
 
-    if "oi" in msg:
-        return frases["oi"]
+    # base padrão (Crystal sempre protegida)
+    resposta = modo["padrao"]
 
-    if "ola" in msg or "olá" in msg:
-        return frases["ola"]
+    if "oi" in msg.lower():
+        resposta = modo["oi"]
 
-    if "ajuda" in msg:
-        return frases["ajuda"]
+    if "olá" in msg.lower() or "ola" in msg.lower():
+        resposta = modo["ola"]
 
-    if "quem" in msg:
-        return frases["quem_e_voce"]
+    if "ajuda" in msg.lower():
+        resposta = modo["ajuda"]
 
-    return frases["padrao"]
+    if "quem" in msg.lower():
+        resposta = modo["quem_e_voce"]
+
+    # 🔥 sobrescreve conforme estado
+    if estado == "atencao":
+        resposta = "Estou observando. Identifique-se corretamente."
+
+    if estado == "protecao":
+        resposta = "Atenção. Você está violando o perímetro da Crystal."
+
+    return resposta
 
 
 if __name__ == "__main__":
