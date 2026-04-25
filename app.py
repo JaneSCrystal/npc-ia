@@ -3,29 +3,45 @@ import json
 
 app = Flask(__name__)
 
-# carrega frases do arquivo
-def carregar_frases():
-    with open("config.json", "r", encoding="utf-8") as f:
-        return json.load(f)
+def carregar():
+    try:
+        with open("config.json", "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return None
 
-@app.route("/", methods=["POST"])
+
+@app.route("/", methods=["GET", "POST"])
 def responder():
+
+    # 🔹 TESTE NO NAVEGADOR
+    if request.method == "GET":
+        return "Servidor ativo."
+
+    # 🔹 IA (Second Life POST)
     msg = request.get_data(as_text=True).lower()
-    frases = carregar_frases()
+
+    cfg = carregar()
+    if not cfg:
+        return "Erro de configuração."
+
+    modo = cfg.get("modo", "seguranca")
+    frases = cfg["modos"][modo]
 
     if "oi" in msg:
-        return frases.get("oi")
+        return frases["oi"]
 
-    if "olá" in msg or "ola" in msg:
-        return frases.get("ola")
+    if "ola" in msg or "olá" in msg:
+        return frases["ola"]
 
     if "ajuda" in msg:
-        return frases.get("ajuda")
+        return frases["ajuda"]
 
-    if "quem é você" in msg or "quem e voce" in msg:
-        return frases.get("quem_e_voce")
+    if "quem" in msg:
+        return frases["quem_e_voce"]
 
-    return frases.get("padrao")
+    return frases["padrao"]
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
