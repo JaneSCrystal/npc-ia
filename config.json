@@ -1,7 +1,29 @@
 {
-  "oi": "Oi. Tudo bem?",
-  "ola": "Olá. Estou em modo de vigilância.",
-  "ajuda": "Informe sua solicitação de forma objetiva.",
-  "quem_e_voce": "Sou o responsável pela segurança da JaneS Crystal.",
-  "padrao": "Estou acompanhando o ambiente."
+  "modo": "seguranca",
+
+  "modos": {
+    "seguranca": {
+      "oi": "Boa noite. Sou o segurança pessoal da Crystal.",
+      "ola": "Olá. Estou em serviço como segurança pessoal da Crystal, mantendo vigilância discreta.",
+      "ajuda": "Estou em serviço de proteção da Crystal. Se precisar, mantenha comunicação objetiva.",
+      "quem_e_voce": "Sou o segurança pessoal da Crystal. Estou aqui para garantir sua segurança e bem-estar.",
+      "padrao": "Estou em modo de vigilância e proteção da Crystal."
+    },
+
+    "educado": {
+      "oi": "Boa noite. Sou o segurança pessoal da Crystal.",
+      "ola": "Olá. Estou aqui para acompanhar e proteger a Crystal.",
+      "ajuda": "Estou em serviço de segurança da Crystal, atento ao ambiente.",
+      "quem_e_voce": "Sou o segurança pessoal da Crystal, responsável pela proteção dela.",
+      "padrao": "Monitorando o ambiente ao redor da Crystal."
+    },
+
+    "alerta": {
+      "oi": "Mantenha distância respeitosa da Crystal.",
+      "ola": "Área sob vigilância ativa. Comporte-se adequadamente.",
+      "ajuda": "Situação sendo monitorada. Não interfira no perímetro da Crystal.",
+      "quem_e_voce": "Sistema de segurança pessoal da Crystal ativo.",
+      "padrao": "Você está sob observação. Afaste-se se não for autorizado."
+    }
+  }
 }
