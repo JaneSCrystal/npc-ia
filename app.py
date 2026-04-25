@@ -21,11 +21,11 @@ def carregar():
 @app.route("/", methods=["GET", "POST"])
 def responder():
 
-    # teste simples no navegador
+    # teste no navegador
     if request.method == "GET":
         return "Servidor ativo."
 
-    # pega mensagem do Second Life
+    # mensagem recebida do Second Life
     raw = request.get_data(as_text=True)
 
     cfg = carregar()
@@ -37,7 +37,7 @@ def responder():
     # -------------------------
     # reconhecimento de nome
     # -------------------------
-    nome = "visitante"
+    nome = "Visitante"
     msg = raw.lower()
 
     if ":" in raw:
@@ -46,7 +46,7 @@ def responder():
         msg = partes[1].strip().lower()
 
     # -------------------------
-    # respostas base
+    # lógica de resposta
     # -------------------------
     resposta = modo["padrao"]
 
@@ -63,9 +63,9 @@ def responder():
         resposta = modo["quem_e_voce"]
 
     # -------------------------
-    # resposta final com nome
+    # resposta final (nome na frente)
     # -------------------------
-    return f"{resposta}, {nome}"
+    return f"{nome}, {resposta}"
 
 
 # -------------------------
