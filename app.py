@@ -25,7 +25,7 @@ def responder():
     if request.method == "GET":
         return "Servidor ativo."
 
-    # mensagem recebida do Second Life
+    # mensagem recebida
     raw = request.get_data(as_text=True)
 
     cfg = carregar()
@@ -46,7 +46,7 @@ def responder():
         msg = partes[1].strip().lower()
 
     # -------------------------
-    # lógica de resposta
+    # lógica de respostas
     # -------------------------
     resposta = modo["padrao"]
 
@@ -60,10 +60,16 @@ def responder():
         resposta = modo["ajuda"]
 
     elif "quem" in msg:
-        resposta = modo["quem_e_voce"]
+        # 🌌 LORE DO ORION
+        resposta = (
+            "Sou Orion Guard. "
+            "Inspirado na constelação Orion, cujas estrelas brilham intensamente no céu noturno, "
+            "eu permaneço atento, observando e protegendo em silêncio. "
+            "Assim como a luz de Orion orienta na escuridão, minha função é garantir a segurança da Crystal."
+        )
 
     # -------------------------
-    # resposta final (nome na frente)
+    # resposta final com nome na frente
     # -------------------------
     return f"{nome}, {resposta}"
 
