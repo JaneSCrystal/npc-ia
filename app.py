@@ -1,25 +1,31 @@
 from flask import Flask, request
-import os
+import json
 
 app = Flask(__name__)
 
-@app.route("/", methods=["GET", "POST"])
+# carrega frases do arquivo
+def carregar_frases():
+    with open("config.json", "r", encoding="utf-8") as f:
+        return json.load(f)
+
+@app.route("/", methods=["POST"])
 def responder():
-    if request.method == "POST":
-        msg = request.get_data(as_text=True).lower()
+    msg = request.get_data(as_text=True).lower()
+    frases = carregar_frases()
 
-        if "oi" in msg or "olá" in msg:
-            return "Olá! Como vai?"
+    if "oi" in msg:
+        return frases.get("oi")
 
-        if "ajuda" in msg:
-            return "Informe sua solicitação."
+    if "olá" in msg or "ola" in msg:
+        return frases.get("ola")
 
-        if "quem é você" in msg:
-            return "Sou responsável pela segurança da JaneS Crystal."
+    if "ajuda" in msg:
+        return frases.get("ajuda")
 
-        return "Estou acompanhando o ambiente."
+    if "quem é você" in msg or "quem e voce" in msg:
+        return frases.get("quem_e_voce")
 
-    return "Servidor ativo."
+    return frases.get("padrao")
 
-port = int(os.environ.get("PORT", 10000))
-app.run(host="0.0.0.0", port=port)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=10000)
