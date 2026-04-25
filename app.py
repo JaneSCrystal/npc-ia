@@ -3,58 +3,73 @@ import json
 
 app = Flask(__name__)
 
+# -------------------------
+# carregar config JSON
+# -------------------------
 def carregar():
-    with open("config.json", "r", encoding="utf-8") as f:
-        return json.load(f)
-
-def detectar_estado(msg):
-    msg = msg.lower()
-
-    if any(x in msg for x in ["ataque", "sair", "invadir", "perigo", "ameaça", "ameaça"]):
-        return "protecao"
-
-    if any(x in msg for x in ["segurança", "seguranca", "estranho", "quem é você"]):
-        return "atencao"
-
-    return "normal"
+    try:
+        with open("config.json", "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        print("Erro ao carregar config:", e)
+        return None
 
 
+# -------------------------
+# endpoint principal
+# -------------------------
 @app.route("/", methods=["GET", "POST"])
 def responder():
 
+    # teste simples no navegador
     if request.method == "GET":
         return "Servidor ativo."
 
-    msg = request.get_data(as_text=True)
-    cfg = carregar()
+    # pega mensagem do Second Life
+    raw = request.get_data(as_text=True)
 
-    estado = detectar_estado(msg)
+    cfg = carregar()
+    if not cfg:
+        return "Erro de configuração."
+
     modo = cfg["modos"]["seguranca"]
 
-    # base padrão (Crystal sempre protegida)
+    # -------------------------
+    # reconhecimento de nome
+    # -------------------------
+    nome = "visitante"
+    msg = raw.lower()
+
+    if ":" in raw:
+        partes = raw.split(":", 1)
+        nome = partes[0].strip()
+        msg = partes[1].strip().lower()
+
+    # -------------------------
+    # respostas base
+    # -------------------------
     resposta = modo["padrao"]
 
-    if "oi" in msg.lower():
+    if "oi" in msg:
         resposta = modo["oi"]
 
-    if "olá" in msg.lower() or "ola" in msg.lower():
+    elif "ola" in msg or "olá" in msg:
         resposta = modo["ola"]
 
-    if "ajuda" in msg.lower():
+    elif "ajuda" in msg:
         resposta = modo["ajuda"]
 
-    if "quem" in msg.lower():
+    elif "quem" in msg:
         resposta = modo["quem_e_voce"]
 
-    # 🔥 sobrescreve conforme estado
-    if estado == "atencao":
-        resposta = "Estou observando. Identifique-se corretamente."
-
-    if estado == "protecao":
-        resposta = "Atenção. Você está violando o perímetro da Crystal."
-
-    return resposta
+    # -------------------------
+    # resposta final com nome
+    # -------------------------
+    return f"{resposta}, {nome}"
 
 
+# -------------------------
+# rodar servidor
+# -------------------------
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
